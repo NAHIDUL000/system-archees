@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard - HR System</title>
+    <style>
+        :root {
+            --primary-color: #2180a3;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-title {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(33, 128, 163, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1a6a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-white);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: #f3f4f6;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary-color);
+            background: #f0f7ff;
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .summary {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .chart-container {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 250px;
+            gap: 15px;
+            padding: 0 10px;
+        }
+
+        .bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .bar-value {
+            background: var(--primary-color);
+            border-radius: 6px 6px 0 0;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 5px;
+        }
+
+        .bar-value:hover {
+            background: #1a6a8a;
+        }
+
+        .bar-label {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+
+            .card-value {
+                font-size: 24px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>👤 Employee Dashboard</h1>
+                <p>View your hours, leaves, salary, and schedules</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div>
+                    <div style="font-weight: 600;">John Doe</div>
+                    <div style="font-size: 12px; color: var(--text-light);">Employee</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('hours')">⏱️ Hours</button>
+            <button class="tab-btn" onclick="switchTab('schedule')">📸 Schedule</button>
+            <button class="tab-btn" onclick="switchTab('leaves')">🏖️ Leaves</button>
+            <button class="tab-btn" onclick="switchTab('salary')">💰 Salary</button>
+            <button class="tab-btn" onclick="switchTab('profile')">👤 Profile</button>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-title">Hours This Month</div>
+                    <div class="card-value">161</div>
+                    <div class="card-subtitle">hours • Target: 160 ✓</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Leaves Used</div>
+                    <div class="card-value">3</div>
+                    <div class="card-subtitle">of 20 days available</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Monthly Salary</div>
+                    <div class="card-value">$4,200</div>
+                    <div class="card-subtitle">Gross • Pending</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Overtime Hours</div>
+                    <div class="card-value">1</div>
+                    <div class="card-subtitle">at 1.5x rate</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 style="margin-bottom: 20px;">📈 Hours Worked Per Week</h3>
+                <div class="chart">
+                    <div class="bar">
+                        <div class="bar-value" style="height: 80%;">40h</div>
+                        <div class="bar-label">Week 1</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-value" style="height: 84%;">42h</div>
+                        <div class="bar-label">Week 2</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-value" style="height: 76%;">38h</div>
+                        <div class="bar-label">Week 3</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-value" style="height: 82%;">41h</div>
+                        <div class="bar-label">Week 4</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary">
+                <h3 style="margin-bottom: 15px;">📋 Quick Summary</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Employee Name</span>
+                    <span class="summary-value">John Doe</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Department</span>
+                    <span class="summary-value">Operations</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Hourly Rate</span>
+                    <span class="summary-value">$26.25/hr</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Deductions</span>
+                    <span class="summary-value">$1,048 (taxes, insurance)</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Net Salary (This Month)</span>
+                    <span class="summary-value" style="color: var(--success-color);">$3,190 ✓</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOURS TAB -->
+        <div id="hours" class="tab-content">
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px;">⏱️ Log Work Hours</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="entryDate" value="2025-12-02">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" id="startTime" value="09:00">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" id="endTime" value="17:30">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notes/Description</label>
+                    <textarea id="timeNotes" placeholder="What did you work on today?"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="addTimeEntry()">✓ Log Hours</button>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px;">📅 Recent Time Entries</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Hours</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timeEntriesTable">
+                        <tr>
+                            <td>Dec 2, 2025</td>
+                            <td>09:00</td>
+                            <td>17:30</td>
+                            <td>8.5h</td>
+                            <td><span class="badge badge-success">Logged</span></td>
+                        </tr>
+                        <tr>
+                            <td>Dec 1, 2025</td>
+                            <td>08:30</td>
+                            <td>17:00</td>
+                            <td>8.5h</td>
+                            <td><span class="badge badge-success">Logged</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SCHEDULE TAB -->
+        <div id="schedule" class="tab-content">
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px;">🤖 AI Schedule Capture</h3>
+                <p style="color: var(--text-light); margin-bottom: 20px;">Upload a picture of your work schedule and our AI will automatically extract the information.</p>
+                
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('scheduleImage').click()">
+                    <div class="upload-icon">📸</div>
+                    <p style="margin-bottom: 10px;"><strong>Drag and drop your schedule image here</strong></p>
+                    <p style="color: var(--text-light); font-size: 12px;">or click to select a file</p>
+                    <input type="file" id="scheduleImage" accept="image/*">
+                </div>
+
+                <div id="imagePreview" class="hidden" style="margin-top: 20px;">
+                    <img id="preview" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <button class="btn btn-primary" onclick="processScheduleImage()" style="margin-top: 15px;">🔍 Process with AI</button>
+                </div>
+
+                <div id="extractedResults" class="hidden" style="margin-top: 20px;">
+                    <div class="alert alert-success">✓ Schedule extracted successfully!</div>
+                    <div class="summary">
+                        <h3 style="margin-bottom: 15px;">📋 Extracted Schedule</h3>
+                        <div id="extractedData"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEAVES TAB -->
+        <div id="leaves" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-title">Vacation Days</div>
+                    <div class="card-value">17</div>
+                    <div class="card-subtitle">of 20 available</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Sick Days</div>
+                    <div class="card-value">9</div>
+                    <div class="card-subtitle">of 10 available</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Personal Days</div>
+                    <div class="card-value">4</div>
+                    <div class="card-subtitle">of 5 available</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px;">📝 Request Leave</h3>
+                <div class="form-group">
+                    <label>Leave Type</label>
+                    <select id="leaveType">
+                        <option>Select leave type</option>
+                        <option value="vacation">Vacation</option>
+                        <option value="sick">Sick Leave</option>
+                        <option value="personal">Personal Day</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>From Date</label>
+                        <input type="date" id="fromDate">
+                    </div>
+                    <div class="form-group">
+                        <label>To Date</label>
+                        <input type="date" id="toDate">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Reason</label>
+                    <textarea id="leaveReason" placeholder="Please provide a reason for your leave request"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="submitLeaveRequest()">📤 Submit Request</button>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px;">📅 Leave History</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Days</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Vacation</td>
+                            <td>Nov 15, 2025</td>
+                            <td>Nov 17, 2025</td>
+                            <td>3 days</td>
+                            <td><span class="badge badge-success">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td>Sick Leave</td>
+                            <td>Nov 10, 2025</td>
+                            <td>Nov 10, 2025</td>
+                            <td>1 day</td>
+                            <td><span class="badge badge-success">Approved</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SALARY TAB -->
+        <div id="salary" class="tab-content">
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px;">💼 Salary Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Base Salary (Annual)</label>
+                        <input type="number" value="50400" readonly style="background: #f3f4f6;">
+                    </div>
+                    <div class="form-group">
+                        <label>Hourly Rate</label>
+                        <input type="number" value="26.25" readonly style="background: #f3f4f6;">
+                    </div>
+                    <div class="form-group">
+                        <label>Hours This Month</label>
+                        <input type="number" value="161" readonly style="background: #f3f4f6;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px;">📄 Current Month Salary Slip (December 2025)</h3>
+                <div class="summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Regular Hours (160)</span>
+                        <span class="summary-value">$4,200.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Overtime (1h @ 1.5x)</span>
+                        <span class="summary-value">$39.38</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label"><strong>Gross Salary</strong></span>
+                        <span class="summary-value" style="font-size: 18px;"><strong>$4,239.38</strong></span>
+                    </div>
+                </div>
+
+                <div class="summary" style="margin-top: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: var(--text-dark);">Deductions</h4>
+                    <div class="summary-item">
+                        <span class="summary-label">Income Tax (15%)</span>
+                        <span class="summary-value">$635.91</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Social Security (6.2%)</span>
+                        <span class="summary-value">$262.84</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Health Insurance</span>
+                        <span class="summary-value">$150.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label"><strong>Total Deductions</strong></span>
+                        <span class="summary-value"><strong>$1,048.75</strong></span>
+                    </div>
+                </div>
+
+                <div class="summary" style="background: #f0f7ff; border-color: var(--primary-color);">
+                    <div class="summary-item">
+                        <span class="summary-label"><strong>Net Salary (Take Home)</strong></span>
+                        <span class="summary-value" style="font-size: 18px; color: var(--success-color);"><strong>$3,190.63</strong></span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" style="margin-top: 20px;" onclick="downloadSalarySlip()">💾 Download Slip (PDF)</button>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px;">📊 Salary History</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Hours</th>
+                            <th>Gross</th>
+                            <th>Deductions</th>
+                            <th>Net</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>December 2025</td>
+                            <td>161h</td>
+                            <td>$4,239.38</td>
+                            <td>$1,048.75</td>
+                            <td>$3,190.63</td>
+                        </tr>
+                        <tr>
+                            <td>November 2025</td>
+                            <td>160h</td>
+                            <td>$4,200.00</td>
+                            <td>$1,043.60</td>
+                            <td>$3,156.40</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PROFILE TAB -->
+        <div id="profile" class="tab-content">
+            <div class="card">
+                <h3 style="margin-bottom: 20px;">👤 My Profile</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" value="John" id="firstName">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" value="Doe" id="lastName">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" value="john@company.com" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" value="+1-555-0123" id="phone">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" value="1990-05-15" id="dob">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" value="123 Main Street, City, State" id="address">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Department</label>
+                        <input type="text" value="Operations" readonly style="background: #f3f4f6;">
+                    </div>
+                    <div class="form-group">
+                        <label>Position</label>
+                        <input type="text" value="Manager" readonly style="background: #f3f4f6;">
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 15px;">Emergency Contact</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Contact Name</label>
+                            <input type="text" value="Jane Doe" id="emergencyName">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Phone</label>
+                            <input type="tel" value="+1-555-0124" id="emergencyPhone">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="saveProfile()">💾 Save Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        const uploadArea = document.getElementById('uploadArea');
+        const scheduleImage = document.getElementById('scheduleImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const preview = document.getElementById('preview');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                scheduleImage.files = files;
+                showPreview();
+            }
+        });
+
+        scheduleImage.addEventListener('change', showPreview);
+
+        function showPreview() {
+            const file = scheduleImage.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                    document.getElementById('extractedResults').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function processScheduleImage() {
+            setTimeout(() => {
+                const extractedResults = document.getElementById('extractedResults');
+                const extractedData = document.getElementById('extractedData');
+                
+                extractedData.innerHTML = `
+                    <div class="summary-item">
+                        <span class="summary-label">Monday</span>
+                        <span class="summary-value">9:00 AM - 5:30 PM</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Tuesday</span>
+                        <span class="summary-value">9:00 AM - 5:30 PM</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Wednesday</span>
+                        <span class="summary-value">9:00 AM - 5:30 PM</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Thursday</span>
+                        <span class="summary-value">9:00 AM - 5:30 PM</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Friday</span>
+                        <span class="summary-value">9:00 AM - 5:00 PM</span>
+                    </div>
+                `;
+                
+                extractedResults.classList.remove('hidden');
+            }, 2000);
+        }
+
+        function addTimeEntry() {
+            const date = document.getElementById('entryDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+
+            if (!date || !startTime || !endTime) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const start = new Date(`2025-01-01 ${startTime}`);
+            const end = new Date(`2025-01-01 ${endTime}`);
+            const hours = ((end - start) / (1000 * 60 * 60)).toFixed(1);
+
+            const row = `
+                <tr>
+                    <td>${new Date(date).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}</td>
+                    <td>${startTime}</td>
+                    <td>${endTime}</td>
+                    <td>${hours}h</td>
+                    <td><span class="badge badge-success">Logged</span></td>
+                </tr>
+            `;
+
+            document.getElementById('timeEntriesTable').insertAdjacentHTML('afterbegin', row);
+            alert('✓ Hours logged! Email confirmation sent to admin.');
+            
+            document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('startTime').value = '09:00';
+            document.getElementById('endTime').value = '17:30';
+            document.getElementById('timeNotes').value = '';
+        }
+
+        function submitLeaveRequest() {
+            const type = document.getElementById('leaveType').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const reason = document.getElementById('leaveReason').value;
+
+            if (!type || type === 'Select leave type' || !fromDate || !toDate || !reason) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            alert('✓ Leave request submitted!\nAdmin will review and you will receive an email notification.');
+            
+            document.getElementById('leaveType').value = 'Select leave type';
+            document.getElementById('fromDate').value = '';
+            document.getElementById('toDate').value = '';
+            document.getElementById('leaveReason').value = '';
+        }
+
+        function downloadSalarySlip() {
+            alert('📥 Downloading salary slip as PDF...\n\nIn production, this generates a formatted PDF with your complete salary details.');
+        }
+
+        function saveProfile() {
+            alert('✓ Profile updated successfully!');
+        }
+
+        document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
